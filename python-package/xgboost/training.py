@@ -12,6 +12,7 @@ from . import rabit
 from . import callback
 
 
+# this function will change
 def _train_internal(params, dtrain,
                     num_boost_round=10, evals=(),
                     obj=None, feval=None,
@@ -57,7 +58,7 @@ def _train_internal(params, dtrain,
         cb for cb in callbacks if cb.__dict__.get('before_iteration', False)]
     callbacks_after_iter = [
         cb for cb in callbacks if not cb.__dict__.get('before_iteration', False)]
-
+#####################################################################################################
     for i in range(start_iteration, num_boost_round):
         for cb in callbacks_before_iter:
             cb(CallbackEnv(model=bst,
@@ -101,7 +102,7 @@ def _train_internal(params, dtrain,
         # do checkpoint after evaluation, in case evaluation also updates booster.
         bst.save_rabit_checkpoint()
         version += 1
-
+######################################################################################################
     if bst.attr('best_score') is not None:
         bst.best_score = float(bst.attr('best_score'))
         bst.best_iteration = int(bst.attr('best_iteration'))
