@@ -19,6 +19,7 @@
 
 #include "xgboost/host_device_vector.h"
 #include "io.h"
+#include "choice.cpp"
 
 namespace xgboost {
 namespace common {
@@ -96,6 +97,9 @@ class ColumnSampler {
       std::shared_ptr<HostDeviceVector<bst_feature_t>> p_features, float colsample) {
     if (colsample == 1.0f) return p_features;
     const auto& features = p_features->HostVector();
+
+    printv(features);
+
     CHECK_GT(features.size(), 0);
     int n = std::max(1, static_cast<int>(colsample * features.size()));
     auto p_new_features = std::make_shared<HostDeviceVector<bst_feature_t>>();
