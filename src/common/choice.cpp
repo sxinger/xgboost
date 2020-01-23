@@ -6,7 +6,7 @@
 #include <string>
 #include <iterator>
 #include <experimental/algorithm>
-
+#include "choice.hpp"
 
 template <typename VT>
 void printv(std::vector<VT> v)
@@ -37,7 +37,7 @@ std::vector<TU> scale_up(std::vector<TU> a, std::vector<float> p)
         TU ai = a.at(i);
         float pif = p.at(i);
 
-        int pin = static_cast<int>(roundf(pif * 100));
+        int pin = static_cast<int>(roundf(pif * 10));
 
         for (int i = 0; i < pin; i++)
         {
@@ -71,14 +71,25 @@ std::vector<TUU> choice(std::vector<TUU> a, int size, bool replace, std::vector<
     std::vector<TUU> ap_out;
 
     for (int i=0; i < size;i++){
-
+        
+        
         std::vector<TUU> temp;
-        std::experimental::sample(
-            ap.begin(),
-            ap.end(),
-            std::back_inserter(temp),
-            1,
-            std::mt19937{std::random_device{}()});
+        temp.resize(ap.size());
+        // std::experimental::sample(
+        //     ap.begin(),
+        //     ap.end(),
+        //     std::back_inserter(temp),
+        //     1,
+        //     std::mt19937{std::random_device{}()});
+
+        temp = ap;
+        std::random_device rd;
+        std::mt19937 g(rd());
+
+        std::shuffle(temp.begin(),
+                     temp.end(),
+                     g);
+
 
         ap_out.push_back(temp.at(0));
         remove(ap,temp.at(0));
@@ -88,18 +99,18 @@ std::vector<TUU> choice(std::vector<TUU> a, int size, bool replace, std::vector<
 }
 
 
-int main(){
+// int main(){
 
 
-    std::vector<int> a{1,      2,  3, 4, 5 };
-    std::vector<float> p{0.199, 1, 3, 0.6, 0}; 
-    std::vector<int> ap_out;
-    std::vector<int> features_weighted_out;
+//     std::vector<int> a{1,      2,  3, 4, 5 };
+//     std::vector<float> p{0.199, 1, 3, 0.6, 0}; 
+//     std::vector<int> ap_out;
+//     std::vector<int> features_weighted_out;
 
-    ap_out = choice(a,3,false,p);
-    printv (ap_out);
+//     ap_out = choice(a,3,false,p);
+//     printv (ap_out);
 
-    // std::vector<float> p{0, 1, 2 ,3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
-}
+//     // std::vector<float> p{0, 1, 2 ,3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
+// }
 
 
