@@ -1,3 +1,4 @@
+// TODO: This file help to understand entire C++ code, so read.
 /*!
  * Copyright 2019 XGBoost contributors
  *
