@@ -6,7 +6,7 @@
 #include <string>
 #include <iterator>
 #include <experimental/algorithm>
-#include "choice.hpp"
+// #include "choice.hpp"
 
 template <typename VT>
 void printv(std::vector<VT> v)
