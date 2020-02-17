@@ -52,9 +52,9 @@ X_test,  y_test = test[X_col] ,test[y_col]
 xg_reg = xgb.XGBClassifier(
     objective='binary:logistic',
     # verbosity=2
-    colsample_bytree = 0.3,
-#     learning_rate = 0.1,
-#     max_depth = 5,
+    colsample_bytree = 0.05,
+    learning_rate = 0.05,
+    max_depth = 9,
     n_jobs = 6
 )
 
@@ -69,11 +69,16 @@ ax = sns.distplot(test.loc[test.y==0, "y_predict_proba"], hist=False)
 ax = sns.distplot(test.loc[test.y==1, "y_predict_proba"], hist=False)
 pyplot.show()
 
+# hist_0, bin_0 = np.histogram(test.loc[test.y==0, "y_predict_proba"].values, normed=True, bins=10)
+# hist_1, bin_1 = np.histogram(test.loc[test.y==1, "y_predict_proba"].values, normed=True, bins=10)
 
+# for i in range(10):
+#     if hist_1[i]> hist_0[i]:
+#         cutoff = bin_1[i]
 
-
-test['predicted_y'] = np.where(test['y_predict_proba']>0.44, 1, 0)
-print(metrics.confusion_matrix(test['y'], test['predicted_y']))
+# print("cutoff: ", cutoff)
+# test['predicted_y'] = np.where(test['y_predict_proba']>= cutoff, 1, 0)
+# print(metrics.confusion_matrix(test['y'], test['predicted_y']))
 print(metrics.log_loss(test['y'], test['y_predict_proba']))
 
 print("#################################################################################")
@@ -134,3 +139,82 @@ p vector used:
 auc 0.7624009231257783
 #################################################################################
 """
+
+"""
+xg_reg = xgb.XGBClassifier(
+    objective='binary:logistic',
+    # verbosity=2
+    colsample_bytree = 0.9,
+    learning_rate = 0.05,
+    max_depth = 9,
+    n_jobs = 6
+)
+
+p vector used: 
+0.013 0.027 0.027 0.027 0.04 0.013 0.013 0.04 0.067 0.067 0.067 0.067 0.067 0.067 0.067 0.067 0.067 0.067 0.067 0.067 
+7 14 15 16 4 19 10 8 9 17 18 11 3 1 13 2 12 6 
+0.022600546061386447
+#################################################################################
+auc 0.7674201896583184
+#################################################################################
+
+
+p vector used: 
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
+19 10 12 4 15 3 18 16 14 1 11 17 9 13 0 7 2 5 
+0.02255969416546546
+#################################################################################
+auc 0.7676620917596312
+#################################################################################
+
+p vector used: 
+0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 
+16 4 0 11 15 18 2 13 12 6 1 3 9 14 10 7 5 17 
+0.022549960669464145
+#################################################################################
+auc 0.7657709754806208
+"""
+"""
+colsample_bytree is higher, so it try to find best split using most features(0.9)(takes more time), 
+so random sampling and weighted sampling become the almost the same and results are alsmost the same
+"""
+
+
+"""
+xg_reg = xgb.XGBClassifier(
+    objective='binary:logistic',
+    # verbosity=2
+    colsample_bytree = 0.1,
+    learning_rate = 0.05,
+    max_depth = 9,
+    n_jobs = 6
+
+p vector used: 
+0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 
+8 3 
+0.02366628350256921
+#################################################################################
+auc 0.7435020041850366
+#################################################################################
+
+p vector used: 
+0.013 0.027 0.027 0.027 0.04 0.013 0.013 0.04 0.067 0.067 0.067 0.067 0.067 0.067 0.067 0.067 0.067 0.067 0.067 0.067 
+6 15 
+0.024202204975577565
+#################################################################################
+auc 0.7545921583645341
+#################################################################################
+
+# p vector used: 
+# 0.221717 0.127305 0.0555893 0.158098 0.0726475 0.0177584 0.00131976 0.13385 0.0149683 0.00473002 0.0398985 0.0119609 0.0469865 0.00297053 0.000100141 0.0167074 0.0178693 0.0275493 0.0275509 0.000422355 
+# 10 1 
+# 0.023189493944076284
+# #################################################################################
+# auc 0.7447824458806428
+# #################################################################################`
+"""
+
+'''
+so we want split with low number of variable (hence speed will be faster), wighted sample will produce better results compare to random.
+'''
+
