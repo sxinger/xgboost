@@ -51,17 +51,17 @@ template <typename TUU>
 std::vector<TUU> choice(std::vector<TUU> a, int size, bool replace, std::vector<float> p)
 {
     if(replace == true){
-        std::cout << "Not Implemented";
+        std::cout << "Not Implemented \n\n";
         return a;
     }
 
     if(size >= a.size()){
-        std::cout << "No need if choosing, subsample size is bigger or equal to sample";
+        std::cout << "No need if choosing, subsample size is bigger or equal to sample \n\n";
         return a;
     }
 
     if (p.size() != a.size()){
-        std::cout << "p and a should have the same size";
+        std::cout << "p and a should have the same size \n\n";
         return a;
     }
 
