@@ -1,6 +1,7 @@
 set -x
 echo "----------------------------------------------------------------------------------------------"
 date
+sudo chown -R lpatel.lpatel ~/projects/repos/xgboost/
 
 cd /home/lpatel/projects/repos/xgboost/build
 cmake .. 
