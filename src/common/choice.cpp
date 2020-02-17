@@ -37,7 +37,7 @@ std::vector<TU> scale_up(std::vector<TU> a, std::vector<float> p)
         TU ai = a.at(i);
         float pif = p.at(i);
 
-        int pin = static_cast<int>(roundf(pif * 10));
+        int pin = static_cast<int>(roundf(pif * 100));
 
         for (int i = 0; i < pin; i++)
         {

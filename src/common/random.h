@@ -111,16 +111,21 @@ class ColumnSampler {
                  new_features.HostVector().end(), rng_);
 
     new_features.Resize(n);
-    std::vector<float> p{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
-    const auto f = choice(features, n, false, p);
+    std::vector<float> p{0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05,0.05};
+    // std::vector<float> p{0.013,0.027,0.027,0.027,0.040,0.013000000000000001,0.013000000000000001,0.040,0.067,0.067,0.067,0.067,0.067,0.067,0.067,0.067,0.067,0.067,0.067,0.067};
+    // old std::vector<float> p{0.22171739109813735, 0.12730530178436755, 0.05558926521589403, 0.15809764476019703, 0.07264754250582335, 0.01775843450857678, 0.001319761739661756, 0.13385047072637432, 0.014968318029756804, 0.004730016276421437, 0.039898479834278834, 0.011960879922769048, 0.04698649524098993, 0.0029705333723439396, 0.00010014101743069482, 0.016707440972108266, 0.017869309893930752, 0.02754928281104403, 0.027550935457739224, 0.0004223548321548965};
+  std::cout << "p vector used: \n";
+  printv(p);
 
-    p_new_features->HostVector() = f;
-    const auto &fr = p_new_features->HostVector();
-    printv(fr);
+  const auto f = choice(features, n, false, p);
 
-    std::sort(new_features.HostVector().begin(),
-              new_features.HostVector().end());
-    return p_new_features;
+  p_new_features->HostVector() = f;
+  const auto &fr = p_new_features -> HostVector();
+  printv(fr);
+
+  std::sort(new_features.HostVector().begin(),
+            new_features.HostVector().end());
+  return p_new_features;
   }
 
  public:
