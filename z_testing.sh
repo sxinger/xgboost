@@ -7,7 +7,8 @@ cmake ..
 make -j 4 
 
 cd /home/lpatel/projects/repos/xgboost/python-package 
-sudo pip3 uninstall -y xgboost   || true
-sudo python3 setup.py install 
+sudo /usr/bin/pip3 uninstall -y xgboost   || true
+sudo /usr/bin/python3 setup.py install #--no-cache-dir
 
-python3 xgboost_example.py
+#/usr/bin/python3 /home/lpatel/projects/repos/xgboost/z_xgboost_example.py
+/usr/bin/python3 /home/lpatel/projects/repos/xgboost/z_xgboost_aki_tesing.py
