@@ -48,11 +48,13 @@ test =  test [interest_cols]
 X_train,y_train = train[X_col],train[y_col]
 X_test,  y_test = test[X_col] ,test[y_col]
 
+print("weight1 in order", weight.set_index(keys=['col']).reindex(X_train.columns.tolist()).weight1.tolist())
+print("weight2 in order", weight.set_index(keys=['col']).reindex(X_train.columns.tolist()).weight2.tolist())
 
 xg_reg = xgb.XGBClassifier(
     objective='binary:logistic',
     # verbosity=2
-    colsample_bytree = 0.05,
+    colsample_bytree = 0.9,
     learning_rate = 0.05,
     max_depth = 9,
     n_jobs = 6
@@ -173,6 +175,13 @@ p vector used:
 0.022549960669464145
 #################################################################################
 auc 0.7657709754806208
+
+0.048 0.024 0.036 0.036 0.024 0.06 0.048 0.012 0.06 0.06 0.06 0.06 0.06 0.06 0.06 0.06 0.06 0.06 0.06 0.06 
+4 11 0 6 19 15 8 12 10 14 1 16 13 9 18 3 5 17 
+0.02260197852838455
+#################################################################################
+auc 0.767501748139106
+#################################################################################
 """
 """
 colsample_bytree is higher, so it try to find best split using most features(0.9)(takes more time), 
@@ -205,16 +214,24 @@ p vector used:
 auc 0.7545921583645341
 #################################################################################
 
-# p vector used: 
-# 0.221717 0.127305 0.0555893 0.158098 0.0726475 0.0177584 0.00131976 0.13385 0.0149683 0.00473002 0.0398985 0.0119609 0.0469865 0.00297053 0.000100141 0.0167074 0.0178693 0.0275493 0.0275509 0.000422355 
-# 10 1 
-# 0.023189493944076284
-# #################################################################################
-# auc 0.7447824458806428
-# #################################################################################`
+xg_reg = xgb.XGBClassifier(
+    objective='binary:logistic',
+    # verbosity=2
+    colsample_bytree = 0.1,
+    learning_rate = 0.05,
+    max_depth = 9,
+    n_jobs = 6
+)
+
+p vector used: 
+0.048 0.024 0.036 0.036 0.024 0.06 0.048 0.012 0.06 0.06 0.06 0.06 0.06 0.06 0.06 0.06 0.06 0.06 0.06 0.06 
+17 9 
+0.024334624478404954
+#################################################################################
+auc 0.7263884681581922
+#################################################################################
 """
 
 '''
 so we want split with low number of variable (hence speed will be faster), wighted sample will produce better results compare to random.
 '''
-
