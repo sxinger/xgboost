@@ -1,16 +1,22 @@
 set -x
 echo "----------------------------------------------------------------------------------------------"
+#conda create -n xgboost_env python=3
+
 date
-# conda deactivate || true
-sudo chown -R lpatel.lpatel ~/projects/repos/xgboost/
+sudo chown -R lpatel ~/projects/repos/xgboost/
 
 cd /home/lpatel/projects/repos/xgboost/build
 cmake .. 
-make -j 4 
+make -j 16 
 
 cd /home/lpatel/projects/repos/xgboost/python-package 
-sudo /usr/bin/pip3 uninstall -y xgboost   || true
-sudo /usr/bin/python3 setup.py install #--no-cache-dir
+# sudo /usr/bin/pip3 uninstall -y xgboost   || true
+# sudo /usr/bin/python3 setup.py install #--no-cache-dir
+env=/opt/anaconda3/envs/xgboost_env/bin
+
+sudo $env/pip uninstall -y xgboost   || true
+$env/python3 setup.py install #--no-cache-dir
+$env/pip freeze > requiremnets.txt
 
 #/usr/bin/python3 /home/lpatel/projects/repos/xgboost/z_xgboost_example.py
-/usr/bin/python3 /home/lpatel/projects/repos/xgboost/z_xgboost_aki_tesing.py
+$env/python3 /home/lpatel/projects/repos/xgboost/z_xgboost_aki_tesing.py
