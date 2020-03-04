@@ -1,13 +1,19 @@
-'''
-1. conda current xgboost
-2. noncodna xgboost with all uniform dist
-3. nonconda xgboost with specific p for each variable
+# ---
+# jupyter:
+#   jupytext:
+#     formats: ipynb,py:light
+#     text_representation:
+#       extension: .py
+#       format_name: light
+#       format_version: '1.5'
+#       jupytext_version: 1.3.4
+#   kernelspec:
+#     display_name: Python 3
+#     language: python
+#     name: python3
+# ---
 
-A. Sample rows
-B. all rows
-'''
-
-print("1 B")
+# +
 from sklearn.datasets import load_boston
 import xgboost as xgb
 from sklearn.metrics import mean_squared_error
@@ -21,6 +27,7 @@ from sklearn.metrics import auc
 import seaborn as sns
 from sklearn import metrics
 import datetime
+from sklearn.model_selection import GridSearchCV
 
 print("xgb.__version__ : ",xgb.__version__)
 data_dir= '/home/lpatel/projects/AKI/data_592v'
@@ -53,58 +60,158 @@ weight3_lst =  weight.set_index(keys=['col_fmt']).reindex(X_train.columns.tolist
 weight4_lst =  weight.set_index(keys=['col_fmt']).reindex(X_train.columns.tolist()).weight4.tolist()
 weight5_lst =  weight.set_index(keys=['col_fmt']).reindex(X_train.columns.tolist()).weight5.tolist()
 
-from sklearn.model_selection import GridSearchCV
-def algorithm_pipeline(X_train_data, X_test_data, y_train_data, y_test_data, 
-                       model, param_grid, cv=10, scoring_fit = 'roc_auc',
-                       do_probabilities = True):
-    
-    gs = GridSearchCV(
-        estimator=model,
-        param_grid=param_grid, 
-        cv=cv, 
-        n_jobs=4, 
-        scoring=scoring_fit,
-        verbose=2
-    )
-    fitted_model = gs.fit(X_train_data, y_train_data)
-    
-    if do_probabilities:
-        pred = fitted_model.predict_proba(X_test_data)
-    else:
-        pred = fitted_model.predict(X_test_data)
-    
-    return fitted_model, pred
 
-model = xgb.XGBClassifier(
-    objective='binary:logistic',
-    n_jobs = 6
-)
-param_grid = {
-    'max_depth': [3, 6, 9],
-    'n_estimators': [500, 1000, 1500],
-    'colsample_bytree': [0.05,0.5,0.75],
-    'subsample': [0.5, 0.75, 0.9],
-    'objective': ['binary:logistic'],
 
-}
+# +
+# def algorithm_pipeline(X_train_data, X_test_data, y_train_data, y_test_data, 
+#                        model, param_grid, cv=10, scoring_fit = 'roc_auc',
+#                        do_probabilities = True):
+    
+#     gs = GridSearchCV(
+#         estimator=model,
+#         param_grid=param_grid, 
+#         cv=cv, 
+#         n_jobs=4, 
+#         scoring=scoring_fit,
+#         verbose=2
+#     )
+#     fitted_model = gs.fit(X_train_data, y_train_data)
+    
+#     if do_probabilities:
+#         pred = fitted_model.predict_proba(X_test_data)
+#     else:
+#         pred = fitted_model.predict(X_test_data)
+    
+#     return fitted_model, pred
 
+# model = xgb.XGBClassifier(
+#     objective='binary:logistic',
+#     n_jobs = 6
+# )
 # param_grid = {
-#     'max_depth': [1],
-#     # 'n_estimators': [500, 1000, 1500],
-#     # 'colsample_bytree': [0.05,0.5,0.75],
-#     # 'subsample': [0.5, 0.75, 0.9],
-#     # 'objective': ['binary:logistic'],
+#     'max_depth': [3, 6, 9],
+#     'n_estimators': [500, 1000, 1500],
+#     'colsample_bytree': [0.05,0.5,0.75],
+#     'subsample': [0.5, 0.75, 0.9],
+#     'objective': ['binary:logistic'],
 
 # }
 
+# # ddddddddddddddddddd
 
-model, pred  = algorithm_pipeline(X_train, X_test, y_train, y_test, model, 
-                                 param_grid, cv=5)
 
-data = pd.DataFrame(model.cv_results_)
-# pd.options.display.max_columns = None
-# pd.options.display.max_rows = None
-print(data)
-t = datetime.datetime.now().strftime('%Y-%m-%d--%H-%M-%S')
-data.to_csv("~/results_parm_cv.csv_weight1_lst" + t)
-print ("done")
+# model, pred  = algorithm_pipeline(X_train, X_test, y_train, y_test, model, 
+#                                  param_grid, cv=5)
+
+# data = pd.DataFrame(model.cv_results_)
+# # pd.options.display.max_columns = None
+# # pd.options.display.max_rows = None
+# print(data)
+# t = datetime.datetime.now().strftime('%Y-%m-%d--%H-%M-%S')
+# data.to_csv("~/results_parm_cv.csv_weight1_lst" + t)
+# print ("done")
+
+# -
+
+dd
+
+weight1_lst
+
+# !pip install bayesian-optimization
+
+from bayes_opt import BayesianOptimization
+
+# +
+AUC_LIST = []
+LOG_LOSS_LIST = []
+ITERbest_LIST = []
+PARAM_LIST = []
+
+dtrain = xgb.DMatrix(X_train, label = y_train)
+# dtest = xgb.DMatrix(X_test, label = y_test)
+
+def XGB_CV(max_depth, n_estimators, colsample_bytree, subsample):
+#     n_estimators):
+
+    global AUC_LIST
+    global LOG_LOSS_LIST
+    global ITERbest_LIST
+    global PARAM_LIST
+    
+    print(n_estimators)
+
+    paramt = {
+              'booster' : 'gbtree',
+              'max_depth' :  int(max_depth),
+              'n_estimators': int(n_estimators),
+              'eta' : 0.01,
+              'objective' : 'binary:logistic',
+              'n_jobs' : 20,
+              'silent' : True,
+              'eval_metric': 'logloss',
+              'subsample' : max(min(subsample, 1), 0),
+              'colsample_bytree' : max(min(colsample_bytree, 1), 0),
+              'seed' : 1001
+              }
+    
+    PARAM_LIST.append(paramt)
+
+    folds = 5
+    cv_score = 0
+
+    print("\n Search parameters (%d-fold validation):\n %s" % (folds, paramt), file=log_file )
+    log_file.flush()
+
+    xgbc = xgb.cv(
+                    paramt,
+                    dtrain,
+                    num_boost_round = int(n_estimators),
+                    stratified = True,
+                    nfold = folds,
+                    early_stopping_rounds = 100,
+                    metrics = ['auc', 'logloss'],
+                    show_stdv = True
+               )
+
+
+
+    auc_score = xgbc['test-auc-mean'].iloc[-1]
+    logloss_score = xgbc['test-logloss-mean'].iloc[-1]
+    iterbest = len(xgbc)
+    AUC_LIST.append(auc_score)
+    LOG_LOSS_LIST.append(logloss_score)
+    ITERbest_LIST.append(iterbest)
+    
+
+    return (auc_score*2) - 1
+
+
+
+XGB_BO = BayesianOptimization(XGB_CV, {
+                                     'max_depth': (3, 9),
+                                     'n_estimators': (1, 10),
+                                     'colsample_bytree': (0.05, 0.95),
+                                     'subsample': (0.5, 0.9),
+                                    })
+
+
+# -
+
+log_file = open('test.log', 'a')
+log_file.flush()
+import warnings
+with warnings.catch_warnings():
+    warnings.filterwarnings('ignore')
+    XGB_BO.maximize(init_points=20, n_iter=100)
+
+AUC_LIST
+
+LOG_LOSS_LIST
+
+df = pd.DataFrame({"auc": AUC_LIST, "log": LOG_LOSS_LIST, "round": ITERbest_LIST, "param": PARAM_LIST })
+df['param'] =  df['param'].astype(str)
+df.to_csv("cv_result_baysian.csv", sep="|")
+
+df
+
+
