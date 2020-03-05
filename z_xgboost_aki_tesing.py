@@ -197,21 +197,34 @@ XGB_BO = BayesianOptimization(XGB_CV, {
 
 # -
 
-log_file = open('test.log', 'a')
+t = datetime.datetime.now().strftime('%Y-%m-%d--%H-%M-%S')
+log_file = open('/home/lpatel/aki/results/test.log'+t, 'a')
 log_file.flush()
 import warnings
 with warnings.catch_warnings():
     warnings.filterwarnings('ignore')
-    XGB_BO.maximize(init_points=20, n_iter=100)
+    XGB_BO.maximize(init_points=10, n_iter=100)
 
 AUC_LIST
 
 LOG_LOSS_LIST
 
+# +
 df = pd.DataFrame({"auc": AUC_LIST, "log": LOG_LOSS_LIST, "round": ITERbest_LIST, "param": PARAM_LIST })
 df['param'] =  df['param'].astype(str)
-df.to_csv("cv_result_baysian.csv", sep="|")
 
-df
+t = datetime.datetime.now().strftime('%Y-%m-%d--%H-%M-%S')
+df.to_csv("/home/lpatel/aki/results/cv_result_baysian.csv"+t, sep="|")
+# -
+
+len(ITERbest_LIST)
+
+len(PARAM_LIST)
+
+len(LOG_LOSS_LIST)
+
+len(AUC_LIST)
+
+PARAM_LIST = PARAM_LIST[1:]
 
 
