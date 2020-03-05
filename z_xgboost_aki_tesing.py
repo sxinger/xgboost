@@ -212,6 +212,6 @@ df.to_csv("/home/lpatel/aki/results/cv_result_baysian.csv"+t, sep="|")
 
 print (len(ITERbest_LIST),len(PARAM_LIST),len(LOG_LOSS_LIST),len(AUC_LIST))
 
-print(weight2_lst)
+print(weight3_lst)
 
 
