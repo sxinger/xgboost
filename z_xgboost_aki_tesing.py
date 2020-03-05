@@ -28,6 +28,8 @@ import seaborn as sns
 from sklearn import metrics
 import datetime
 from sklearn.model_selection import GridSearchCV
+from bayes_opt import BayesianOptimization
+import warnings
 
 print("xgb.__version__ : ",xgb.__version__)
 data_dir= '/home/lpatel/projects/AKI/data_592v'
@@ -111,15 +113,6 @@ weight5_lst =  weight.set_index(keys=['col_fmt']).reindex(X_train.columns.tolist
 # data.to_csv("~/results_parm_cv.csv_weight1_lst" + t)
 # print ("done")
 
-# -
-
-dd
-
-weight1_lst
-
-# !pip install bayesian-optimization
-
-from bayes_opt import BayesianOptimization
 
 # +
 AUC_LIST = []
@@ -128,23 +121,26 @@ ITERbest_LIST = []
 PARAM_LIST = []
 
 dtrain = xgb.DMatrix(X_train, label = y_train)
-# dtest = xgb.DMatrix(X_test, label = y_test)
 
-def XGB_CV(max_depth, n_estimators, colsample_bytree, subsample):
-#     n_estimators):
+
+def XGB_CV(max_depth,
+          # n_estimators, 
+           colsample_bytree, subsample, min_child_weight,eta):
+
 
     global AUC_LIST
     global LOG_LOSS_LIST
     global ITERbest_LIST
     global PARAM_LIST
     
-    print(n_estimators)
+    #print(n_estimators)
 
     paramt = {
               'booster' : 'gbtree',
               'max_depth' :  int(max_depth),
-              'n_estimators': int(n_estimators),
-              'eta' : 0.01,
+              'min_child_weight' : int(min_child_weight),
+#               'n_estimators': int(n_estimators),
+              'eta' : int(eta),
               'objective' : 'binary:logistic',
               'n_jobs' : 20,
               'silent' : True,
@@ -165,7 +161,7 @@ def XGB_CV(max_depth, n_estimators, colsample_bytree, subsample):
     xgbc = xgb.cv(
                     paramt,
                     dtrain,
-                    num_boost_round = int(n_estimators),
+                    #num_boost_round = int(n_estimators),
                     stratified = True,
                     nfold = folds,
                     early_stopping_rounds = 100,
@@ -188,26 +184,23 @@ def XGB_CV(max_depth, n_estimators, colsample_bytree, subsample):
 
 
 XGB_BO = BayesianOptimization(XGB_CV, {
-                                     'max_depth': (3, 9),
-                                     'n_estimators': (1, 10),
-                                     'colsample_bytree': (0.05, 0.95),
-                                     'subsample': (0.5, 0.9),
+                                     'max_depth': (4, 10),
+#                                      'n_estimators': (1, 10),
+                                     'colsample_bytree': (0.5, 0.9),
+                                     'subsample': (0.5, 0.8),
+                                     'min_child_weight':(1,10),
+                                     'eta':(0.05,0.3)
                                     })
 
 
-# -
-
+# +
 t = datetime.datetime.now().strftime('%Y-%m-%d--%H-%M-%S')
 log_file = open('/home/lpatel/aki/results/test.log'+t, 'a')
 log_file.flush()
-import warnings
+
 with warnings.catch_warnings():
     warnings.filterwarnings('ignore')
     XGB_BO.maximize(init_points=10, n_iter=100)
-
-AUC_LIST
-
-LOG_LOSS_LIST
 
 # +
 df = pd.DataFrame({"auc": AUC_LIST, "log": LOG_LOSS_LIST, "round": ITERbest_LIST, "param": PARAM_LIST })
@@ -217,14 +210,7 @@ t = datetime.datetime.now().strftime('%Y-%m-%d--%H-%M-%S')
 df.to_csv("/home/lpatel/aki/results/cv_result_baysian.csv"+t, sep="|")
 # -
 
-len(ITERbest_LIST)
+print (len(ITERbest_LIST),len(PARAM_LIST),len(LOG_LOSS_LIST),len(AUC_LIST))
 
-len(PARAM_LIST)
-
-len(LOG_LOSS_LIST)
-
-len(AUC_LIST)
-
-PARAM_LIST = PARAM_LIST[1:]
-
-
+# +
+#PARAM_LIST = PARAM_LIST[1:]
