@@ -200,7 +200,7 @@ log_file.flush()
 
 with warnings.catch_warnings():
     warnings.filterwarnings('ignore')
-    XGB_BO.maximize(init_points=1, n_iter=1)
+    XGB_BO.maximize(init_points=10, n_iter=100)
 
 # +
 df = pd.DataFrame({"auc": AUC_LIST, "log": LOG_LOSS_LIST, "round": ITERbest_LIST, "param": PARAM_LIST })
