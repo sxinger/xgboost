@@ -140,7 +140,7 @@ def XGB_CV(max_depth,
               'max_depth' :  int(max_depth),
               'min_child_weight' : int(min_child_weight),
 #               'n_estimators': int(n_estimators),
-              'eta' : int(eta),
+              'eta' : float(eta),
               'objective' : 'binary:logistic',
               'n_jobs' : 20,
               'silent' : True,
@@ -200,7 +200,7 @@ log_file.flush()
 
 with warnings.catch_warnings():
     warnings.filterwarnings('ignore')
-    XGB_BO.maximize(init_points=10, n_iter=100)
+    XGB_BO.maximize(init_points=1, n_iter=1)
 
 # +
 df = pd.DataFrame({"auc": AUC_LIST, "log": LOG_LOSS_LIST, "round": ITERbest_LIST, "param": PARAM_LIST })
@@ -212,6 +212,6 @@ df.to_csv("/home/lpatel/aki/results/cv_result_baysian.csv"+t, sep="|")
 
 print (len(ITERbest_LIST),len(PARAM_LIST),len(LOG_LOSS_LIST),len(AUC_LIST))
 
-print(weight3_lst)
+print(weight1_lst)
 
 
