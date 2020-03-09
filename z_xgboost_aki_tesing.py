@@ -62,7 +62,22 @@ weight3_lst =  weight.set_index(keys=['col_fmt']).reindex(X_train.columns.tolist
 weight4_lst =  weight.set_index(keys=['col_fmt']).reindex(X_train.columns.tolist()).weight4.tolist()
 weight5_lst =  weight.set_index(keys=['col_fmt']).reindex(X_train.columns.tolist()).weight5.tolist()
 
+# -
 
+
+# fit model no training data
+#params = {'booster': 'gbtree', 'max_depth': 10, 'min_child_weight': 10, 'eta': 0.3, 'objective': 'binary:logistic', 'n_jobs': 20, 'silent': True, 'eval_metric': 'logloss', 'subsample': 0.8, 'colsample_bytree': 0.5000000007978516, 'seed': 1001}
+model = xgb.XGBClassifier(
+booster= 'gbtree', max_depth= 10, min_child_weight= 10, eta= 0.3, objective= 'binary:logistic', n_jobs= 20, silent= True, eval_metric= 'logloss', subsample= 0.8, colsample_bytree= 0.5000000007978516, seed= 1001
+)
+
+model.fit(X_train, y_train)
+print(model.get_xgb_params)
+df= pd.DataFrame({'cols':X_train.columns,'feature_importances' :model.feature_importances_ }).sort_values(by='feature_importances',ascending=False)
+t = datetime.datetime.now().strftime('%Y-%m-%d--%H-%M-%S')
+df.to_csv("/home/lpatel/aki/results/feature_importance_tesing.csv"+t+'_w1',index=False)
+model.predict(X_test)
+exit(0)
 
 # +
 # def algorithm_pipeline(X_train_data, X_test_data, y_train_data, y_test_data, 
@@ -213,5 +228,22 @@ df.to_csv("/home/lpatel/aki/results/cv_result_baysian.csv"+t, sep="|")
 print (len(ITERbest_LIST),len(PARAM_LIST),len(LOG_LOSS_LIST),len(AUC_LIST))
 
 print(weight1_lst)
+
+print(weight2_lst)
+
+print(weight3_lst)
+
+print(weight4_lst)
+
+print(weight5_lst)
+
+w5_string = weight.set_index(keys=['col_fmt']).reindex(X_train.columns.tolist()).weight5.tolist()
+print(["{0:.7f}".format(i) for i in w5_string])
+
+print([1/len(weight1_lst) for i in range(len(weight1_lst))])
+
+
+
+df
 
 
